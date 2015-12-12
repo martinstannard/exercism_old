@@ -4,37 +4,37 @@ defmodule Sublist do
   and if not whether it is equal or unequal to the second list.
   """
   def compare(a, b) do
+
     if length(a) > length(b) do
-      do_compare(b, a, true, false, b)
+      do_compare(b, a, :superlist)
     else
-      do_compare(a, b, true, true, a)
+      do_compare(a, b, :sublist)
     end
   end
 
-  defp do_compare([], [], aligned, sub, _) do
-    if aligned do
-      :equal
-    else
-      sub_or_sup(sub)
-    end
-  end
-
-  defp do_compare([], _, _, sub, _), do: sub_or_sup(sub)
-  defp do_compare([nil], _, _, sub, _), do: sub_or_sup(sub)
-
-  defp do_compare([a], [], _, _, _), do: :unequal
-  defp do_compare([h|t], [], _, sub, _), do: sub_or_sup(sub)
-
-  defp do_compare([h1|t1], [h2|t2], aligned, sub, list) do
-    cond do
-      h1 === h2 ->
-        do_compare(t1, t2, aligned, sub, list)
+  defp do_compare(a, b, sub) do
+    case subby(a, b) do
       true ->
-        do_compare(list, t2, false, sub, list)
+        if length(a) == length(b) do
+          :equal
+        else
+          sub
+        end
+      false ->
+        :unequal
     end
   end
 
-  defp sub_or_sup(true), do: :sublist
-  defp sub_or_sup(false), do: :superlist
+  defp subby(a, b), do: is_sub(a, b, a, b)
+
+  def is_sub([], _, _, _), do: true
+  def is_sub(_, [], _, _), do: false
+  def is_sub([h1|t1], [h2|t2], list1, [hl2|tl2]) do
+    case h1 === h2 do
+      true -> is_sub(t1, t2, list1, [hl2|tl2]) 
+      _ -> is_sub(list1, tl2, list1, [h2|t2])
+    end
+  end
+  def is_sub(a, [h|t], _, _), do: a === h
 
 end
