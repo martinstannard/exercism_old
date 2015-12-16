@@ -14,21 +14,17 @@ defmodule DNA do
   """
   @spec count([char], char) :: non_neg_integer
   def count(strand, nucleotide) do
-    validate_base(nucleotide)
-    strand |> Enum.map(&(validate_base(&1)))
-    Enum.reduce(strand, 0, fn(x, acc) -> base_match(x, nucleotide) + acc end)
+    validate(nucleotide)
+    strand
+    |> Enum.map(&(validate(&1)))
+    |> Enum.filter( &(&1 == nucleotide))
+    |> length
   end
 
-  defp base_match(base, codon) do
-    if base == codon do
-      1
+  defp validate(base) do
+    if Enum.member?(@nucleotides, base) do
+      base
     else
-      0
-    end
-  end
-
-  defp validate_base(base) do
-    unless Enum.member?([?A, ?C, ?G, ?T], base) do
       raise(ArgumentError, message: "Not a valid base")
     end
   end
