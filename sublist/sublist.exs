@@ -4,25 +4,15 @@ defmodule Sublist do
   and if not whether it is equal or unequal to the second list.
   """
   def compare(list1, list2) do
-    # compare length reduce to 1 sort of compare, pass in list type
     cond do
-      length(list1) < length(list2) ->
-        do_compare(list1, list2, :sublist)
-      length(list1) == length(list2) ->
-        do_compare(list2, list1, :equal)
-      length(list1) > length(list2) ->
-        do_compare(list2, list1, :superlist)
+      list1 == list2 -> :equal
+      sublist?(list1, list2) -> :sublist
+      sublist?(list2, list1) -> :superlist
+      true -> :unequal
     end
   end
 
-  defp do_compare(list1, list2, subtype) do
-    case subby(list1, list2) do
-      true -> subtype
-      false -> :unequal
-    end
-  end
-
-  defp subby(list1, list2), do: is_sub(list1, list2, list1, list2)
+  defp sublist?(list1, list2), do: is_sub(list1, list2, list1, list2)
 
   defp is_sub([], _, _, _), do: true
   defp is_sub(_, [], _, _), do: false
@@ -32,6 +22,5 @@ defmodule Sublist do
       _ -> is_sub(list1, tl2, list1, [h2|t2])
     end
   end
-  defp is_sub(a, [h|_], _, _), do: a === h
 
 end
