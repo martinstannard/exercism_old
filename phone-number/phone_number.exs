@@ -18,13 +18,42 @@ defmodule Phone do
   """
   @spec number(String.t) :: String.t
   def number(raw) do
-    raw
-    |> remove_symbols
-
+    if contains_letters(raw) do
+      "0000000000"
+    else
+      raw
+      |> remove_symbols
+      |> convert
+    end
   end
 
   defp remove_symbols(number) do
-    Regex.replace(~r/\s/, number, "")
+    Regex.replace(~r/[^\d]/, number, "")
+  end
+
+  defp contains_letters(number) do
+    Regex.match?(~r/[a-z]/, number)
+  end
+
+  defp convert(number) do
+    case String.length(number) do
+      10 -> number
+      11 ->
+        if first_is_one(number) do
+          String.slice(number, 1, 12)
+        else
+          zero(String.slice(number, 0, 10))
+        end
+      _ -> "0000000000"
+    end
+  end
+
+  defp zero(number) do
+    Regex.replace(~r/\d/, number, "0")
+  end
+
+  defp first_is_one(number) do
+    String.at(number, 0) == "1"
   end
 
   @doc """
@@ -46,7 +75,7 @@ defmodule Phone do
   """
   @spec area_code(String.t) :: String.t
   def area_code(raw) do
-  
+    String.slice(convert(raw), 0, 3)
   end
 
   @doc """
@@ -68,6 +97,10 @@ defmodule Phone do
   """
   @spec pretty(String.t) :: String.t
   def pretty(raw) do
-  
+    area = area_code(raw)
+    converted = convert(raw)
+    mid = String.slice(converted, 3, 3)
+    last = String.slice(converted, 6, 4)
+    "(#{area}) #{mid}-#{last}"
   end
 end
