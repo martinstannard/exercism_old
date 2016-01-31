@@ -9,6 +9,10 @@ defmodule ETL do
   """
   @spec transform(Dict.t) :: map()
   def transform(input) do
+    Enum.reduce(input, %{}, &transform_key(&1, &2))
+  end
 
+  defp transform_key({key, words}, map) do
+    Enum.reduce(words, map, &Map.put(&2, String.downcase(&1), key))
   end
 end
