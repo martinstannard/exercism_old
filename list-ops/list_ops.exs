@@ -21,15 +21,15 @@ defmodule ListOps do
 
   @spec reverse(list) :: list
   def reverse(l) do
-    _reverser(l)
+    _reverser(l, [])
   end
 
-  def _reverser([head|tail]) do
-    [ _reverser(tail) | head]
+  def _reverser([head|tail], acc) do
+    _reverser(tail, [head|acc])
   end
 
-  def _reverser([]) do
-    []
+  def _reverser([], acc) do
+    acc
   end
 
   @spec map(list, (any -> any)) :: list
